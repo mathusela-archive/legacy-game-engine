@@ -1,9 +1,0 @@
-D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build/CMakeFiles/Experimental.dir
-D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build/CMakeFiles/Nightly.dir
-D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build/CMakeFiles/Continuous.dir
-D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build/CMakeFiles/NightlyMemoryCheck.dir
-D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build/CMakeFiles/dungeon-crawler.dir
-D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build/CMakeFiles/PACKAGE.dir
-D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build/CMakeFiles/RUN_TESTS.dir
-D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build/CMakeFiles/ALL_BUILD.dir
-D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build/CMakeFiles/ZERO_CHECK.dir
