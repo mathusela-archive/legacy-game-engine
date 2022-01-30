@@ -1,3 +1,14 @@
+/**
+ * @file model.cpp
+ * @author Matthew Richarson
+ * @brief Define Model and Mesh classes for rendering and importing geometry form external file formats.
+ * @version 0.1
+ * @date 2022-01-30
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "headers/model.hpp"
 
 #include "headers/standard-functions.hpp"

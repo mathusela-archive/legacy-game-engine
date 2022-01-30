@@ -1,3 +1,14 @@
+/**
+ * @file standard-functions.cpp
+ * @author Matthew Richardson
+ * @brief Definitions of various standard helper functions which are used throught the codebase.
+ * @version 0.1
+ * @date 2022-01-30
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include <iostream>
 #include <fstream>
 
