@@ -1,0 +1,12 @@
+[
+{
+  "directory": "D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build",
+  "command": "C:\\MinGW\\bin\\mingw32-g++.exe  @CMakeFiles/dungeon-crawler.dir/includes_CXX.rsp -g -o CMakeFiles\\dungeon-crawler.dir\\source\\main.cpp.obj -c D:\\Programming\\C++\\code\\ALevelProgrammingProject\\dungeon-crawler\\source\\main.cpp",
+  "file": "D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/source/main.cpp"
+},
+{
+  "directory": "D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build",
+  "command": "C:\\MinGW\\bin\\mingw32-gcc.exe  @CMakeFiles/dungeon-crawler.dir/includes_C.rsp -g -o CMakeFiles\\dungeon-crawler.dir\\source\\glad.c.obj -c D:\\Programming\\C++\\code\\ALevelProgrammingProject\\dungeon-crawler\\source\\glad.c",
+  "file": "D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/source/glad.c"
+}
+]
