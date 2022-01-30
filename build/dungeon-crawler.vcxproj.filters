@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\source\standard-functions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\source\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\source\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{A6EB723D-C2B6-39E1-92BC-F32330B87AE1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

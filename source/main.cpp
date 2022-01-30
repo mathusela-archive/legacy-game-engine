@@ -1,26 +1,29 @@
+/**
+ * @file main.cpp
+ * @author Matthew Richardson
+ * @version 0.1
+ * @date 2022-01-30
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
+#define DEV
+
 #include <iostream>
+#include <fstream>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-auto create_window(unsigned int width, unsigned int height, char* title) {
-	glfwInit();
+#include "headers/standard-functions.hpp"
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	auto window = glfwCreateWindow(width, height, title, NULL, NULL);
-	glfwMakeContextCurrent(window);
-
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
-	glViewport(0, 0, width, height);
-
-	return window;
-}
+const unsigned int WIDTH = 500;
+const unsigned int HEIGHT = 500;
+char TITLE[] = "Dungeon Crawler";
 
 int main() {
-	auto window = create_window(500, 500, "Dungeon Crawler");
+	auto window = create_window(WIDTH, HEIGHT, TITLE);
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwSwapBuffers(window);

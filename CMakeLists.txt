@@ -7,9 +7,9 @@ enable_testing()
 include_directories("./include/")
 link_directories("./libs/")
 
-link_libraries(glfw3 opengl32 gdi32)
+link_libraries(glfw3 assimp-vc140-mt opengl32 gdi32)
 
-add_executable(dungeon-crawler ./source/main.cpp ./source/glad.c)
+add_executable(dungeon-crawler ./source/main.cpp ./source/standard-functions.cpp ./source/glad.c ./source/model.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

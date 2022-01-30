@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\build\CMakeFiles\6c79fda973435c994b6db1b081fab4bb\NightlyMemoryCheck.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\build\CMakeFiles\NightlyMemoryCheck" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{C0D09581-D25C-3086-B6CD-C74BBAEEF5E3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+^D:\PROGRAMMING\C++\CODE\ALEVELPROGRAMMINGPROJECT\DUNGEON-CRAWLER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler -BD:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build --check-stamp-file D:/Programming/C++/code/ALevelProgrammingProject/dungeon-crawler/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
