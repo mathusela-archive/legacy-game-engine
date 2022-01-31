@@ -101,7 +101,7 @@ std::string import_shader_source(std::string inputPath) {
 }
 
 /**
- * @brief Gnerate OpenGL shader program. 
+ * @brief Generate OpenGL shader program. 
  * 
  * @param vertexShaderPath 
  * @param fragmentShaderPath 
