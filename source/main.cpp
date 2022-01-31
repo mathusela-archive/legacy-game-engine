@@ -33,7 +33,8 @@ int main() {
 
 	auto shaderProgram = create_shader(ROOT_DIR + "resources/shaders/solid/vertex-shader.vert", ROOT_DIR + "resources/shaders/solid/fragment-shader.frag");
 	Camera camera(90.0f, WIDTH, HEIGHT, 0.02f, 100.0f, glm::vec3 {0.0, 0.0, 0.0}, glm::vec3 {0.0, 0.0, 1.0}); 
-	Model test(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 0.0, 10.0});
+	Model cube(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 0.0, 10.0});
+	Model plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, 0.0, 0.0));
 	std::vector<Light> sceneLights = {
 		Light {glm::vec3{5.0, 5.0, 8.0}, glm::vec3{1.0, 1.0, 1.0}, POINT}
 	};
@@ -48,7 +49,8 @@ int main() {
 
 		camera_controller(&camera, window);
 
-		test.draw(shaderProgram, camera, sceneLights);
+		cube.draw(shaderProgram, camera, sceneLights);
+		plane.draw(shaderProgram, camera, sceneLights);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
