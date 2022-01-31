@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-GLFWwindow* create_window(unsigned int width, unsigned int height, char* title);
+GLFWwindow* create_window(unsigned int width, unsigned int height, char* title, unsigned int MSAA);
 
 unsigned int create_texture(std::string imagePath);
 

@@ -22,21 +22,26 @@
 #include "headers/model.hpp"
 #include "headers/scripts/camera-controller.hpp"
 
-const unsigned int WIDTH = 1000;
-const unsigned int HEIGHT = 800;
+const unsigned int WIDTH = 1920;
+const unsigned int HEIGHT = 1080;
 char TITLE[] = "Dungeon Crawler";
 
 const std::string ROOT_DIR = "../../";
 
 int main() {
-	auto window = create_window(WIDTH, HEIGHT, TITLE);
+	auto window = create_window(WIDTH, HEIGHT, TITLE, 4);
 
 	auto shaderProgram = create_shader(ROOT_DIR + "resources/shaders/solid/vertex-shader.vert", ROOT_DIR + "resources/shaders/solid/fragment-shader.frag");
 	Camera camera(90.0f, WIDTH, HEIGHT, 0.02f, 100.0f, glm::vec3 {0.0, 0.0, 0.0}, glm::vec3 {0.0, 0.0, 1.0}); 
 	Model test(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 0.0, 10.0});
 
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_MULTISAMPLE);
+
 	while (!glfwWindowShouldClose(window)) {
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		camera_controller(&camera, window);
 

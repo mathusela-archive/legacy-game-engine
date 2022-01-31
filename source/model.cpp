@@ -87,7 +87,6 @@ void Mesh::draw(unsigned int shaderProgram, Camera camera, glm::mat4 worldPos) {
 	glUseProgram(shaderProgram);
 
 	// Textures
-	// FIXME:
 	unsigned int texturesCount = 0;
 	unsigned int diffusionCount = 0; unsigned int specularCount = 0; unsigned int normalCount = 0;
 	for (int i = 0; i < m_textures.size(); i++) {
