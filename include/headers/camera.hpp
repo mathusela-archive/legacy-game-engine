@@ -9,6 +9,10 @@
 
 #include <vector>
 
+/**
+ * @brief Camera class, used for rendering and generating view matrices.
+ * 
+ */
 class Camera {
 public:
 	glm::vec3 m_loc;
