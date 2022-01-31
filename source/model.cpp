@@ -90,21 +90,21 @@ void Mesh::draw(unsigned int shaderProgram, Camera camera, glm::mat4 worldPos) {
 	// FIXME:
 	unsigned int texturesCount = 0;
 	unsigned int diffusionCount = 0; unsigned int specularCount = 0; unsigned int normalCount = 0;
-	// for (int i = 0; i < m_textures.size(); i++) {
-	// 	if (m_textures[i].type == "diffuse") {
-	// 		diffusionCount++; texturesCount = diffusionCount;
-	// 	}
-	// 	else if (m_textures[i].type == "specular") {
-	// 		specularCount++; texturesCount = specularCount;
-	// 	}
-	// 	else {
-	// 		normalCount++; texturesCount = normalCount;
-	// 	}
+	for (int i = 0; i < m_textures.size(); i++) {
+		if (m_textures[i].type == "diffuse") {
+			diffusionCount++; texturesCount = diffusionCount;
+		}
+		else if (m_textures[i].type == "specular") {
+			specularCount++; texturesCount = specularCount;
+		}
+		else {
+			normalCount++; texturesCount = normalCount;
+		}
 
-	// 	glUniform1i(glGetUniformLocation(shaderProgram, (m_textures[i].type + std::to_string(texturesCount)).c_str()), i);
-	// 	glActiveTexture(GL_TEXTURE0+i); glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
-	// 	texturesCount = 0;
-	// }
+		glUniform1i(glGetUniformLocation(shaderProgram, (m_textures[i].type + std::to_string(texturesCount)).c_str()), i);
+		glActiveTexture(GL_TEXTURE0+i); glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
+		texturesCount = 0;
+	}
 
 	// Does the model have a diffusion/spec/normal map
 	glUniform1i(glGetUniformLocation(shaderProgram, "diffusionMapCount"), diffusionCount);
@@ -267,7 +267,7 @@ std::vector<Texture> Model::load_textures(aiMaterial* mat, aiTextureType type, s
 		mat->GetTexture(type, i, &texturePath);
 
 #ifdef DEV
-		std::cout << directory << std::endl;
+		std::cout << m_directory << std::endl;
 		std::cout << texturePath.C_Str() << std::endl;
 #endif
 
