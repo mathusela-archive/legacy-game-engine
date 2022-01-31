@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "headers/structs.hpp"
+#include "headers/camera.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
