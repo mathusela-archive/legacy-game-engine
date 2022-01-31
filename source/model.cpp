@@ -82,7 +82,7 @@ void Mesh::initMesh() {
  * @param camera 
  * @param worldPos 
  */
-void Mesh::draw(unsigned int shaderProgram, Camera camera, glm::mat4 worldPos) {
+void Mesh::draw(unsigned int shaderProgram, Camera camera, glm::mat4 worldPos, std::vector<Light> sceneLights) {
 	// Use shader program
 	glUseProgram(shaderProgram);
 
@@ -109,6 +109,18 @@ void Mesh::draw(unsigned int shaderProgram, Camera camera, glm::mat4 worldPos) {
 	glUniform1i(glGetUniformLocation(shaderProgram, "diffusionMapCount"), diffusionCount);
 	glUniform1i(glGetUniformLocation(shaderProgram, "specularMapCount"), specularCount);
 	glUniform1i(glGetUniformLocation(shaderProgram, "normalMapCount"), normalCount);
+
+	// Lighting
+	for (int i=0; i<sceneLights.size(); i++) {
+		std::string posName = "sceneLights[" + std::to_string(i) + "].position";
+		std::string colorName = "sceneLights[" + std::to_string(i) + "].color";
+		std::string typeName = "sceneLights[" + std::to_string(i) + "].type";
+
+		glUniform3fv(glGetUniformLocation(shaderProgram, posName.c_str()), 1, glm::value_ptr(sceneLights[i].location));
+		glUniform3fv(glGetUniformLocation(shaderProgram, colorName.c_str()), 1, glm::value_ptr(sceneLights[i].color));
+		glUniform1i(glGetUniformLocation(shaderProgram, typeName.c_str()), sceneLights[i].type);
+	}
+	glUniform1i(glGetUniformLocation(shaderProgram, "lightsCount"), sceneLights.size());
 
 	// Set uniforms
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "world"), 1, GL_FALSE, glm::value_ptr(worldPos));
@@ -306,10 +318,10 @@ std::vector<Texture> Model::load_textures(aiMaterial* mat, aiTextureType type, s
  * @param shaderProgram 
  * @param camera 
  */
-void Model::draw(unsigned int shaderProgram, Camera camera) {
+void Model::draw(unsigned int shaderProgram, Camera camera, std::vector<Light> sceneLights) {
 	// Draw every submesh
 	for (int i = 0; i < m_meshes.size(); i++) {
-		m_meshes[i].draw(shaderProgram, camera, m_worldPos);
+		m_meshes[i].draw(shaderProgram, camera, m_worldPos, sceneLights);
 	}
 }
 

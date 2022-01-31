@@ -104,6 +104,7 @@ std::string import_shader_source(std::string inputPath) {
     return inputText;
 }
 
+#define DEV
 /**
  * @brief Generate OpenGL shader program. 
  * 

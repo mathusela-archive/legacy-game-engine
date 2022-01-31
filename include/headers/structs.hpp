@@ -26,3 +26,15 @@ struct Texture {
 	std::string type;
 	std::string path;
 };
+
+enum t_LightType {POINT, DIRECTIONAL};
+
+/**
+ * @brief Attribute wrapper for Light objects.
+ * 
+ */
+struct Light {
+	glm::vec3 location;
+	glm::vec3 color;
+	t_LightType type;
+};

@@ -23,7 +23,7 @@ public:
 	std::vector<unsigned int> m_indices;
 	std::vector<Texture> m_textures;
 
-	void draw(unsigned int shaderProgram, Camera camera, glm::mat4 worldPos);
+	void draw(unsigned int shaderProgram, Camera camera, glm::mat4 worldPos, std::vector<Light> sceneLights);
 
 	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
@@ -51,7 +51,7 @@ private:
 public:
 	Model(std::string path, glm::vec3 spawnLocation);
 
-	void draw(unsigned int shaderProgram, Camera camera);
+	void draw(unsigned int shaderProgram, Camera camera, std::vector<Light> sceneLights);
 
 	void set_loc(glm::vec3 loc);
 	void set_scale(glm::vec3 scale);
