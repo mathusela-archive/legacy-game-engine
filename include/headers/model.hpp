@@ -8,8 +8,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-// TODO: Add rendering functions to both classes
-
 /**
  * @brief Individual mesh with geometry, stores its own textures, verticies and indicies.
  * 
@@ -23,6 +21,8 @@ public:
 	std::vector<Vertex> m_vertices;
 	std::vector<unsigned int> m_indices;
 	std::vector<Texture> m_textures;
+
+	void draw(unsigned int shaderProgram, Camera camera, glm::mat4 worldPos);
 
 	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
@@ -49,6 +49,8 @@ private:
 
 public:
 	Model(std::string path, glm::vec3 spawnLocation);
+
+	void draw(unsigned int shaderProgram, Camera camera);
 
 	void set_loc(glm::vec3 loc);
 	void set_scale(glm::vec3 scale);

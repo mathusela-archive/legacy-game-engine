@@ -12,6 +12,7 @@
 #include "headers/model.hpp"
 
 #include "headers/standard-functions.hpp"
+#include "headers/camera.hpp"
 #include <glad/glad.h>
 
 #include <iostream>
@@ -72,6 +73,52 @@ void Mesh::initMesh() {
 	// Unbind VAO
 	glBindVertexArray(0);
 
+}
+
+/**
+ * @brief Draw mesh.
+ * 
+ * @param shaderProgram 
+ * @param camera 
+ * @param worldPos 
+ */
+void Mesh::draw(unsigned int shaderProgram, Camera camera, glm::mat4 worldPos) {
+	// Use shader program
+	glUseProgram(shaderProgram);
+
+	// Textures
+	unsigned int texturesCount = 0;
+	unsigned int diffusionCount = 0; unsigned int specularCount = 0; unsigned int normalCount = 0;
+	for (int i = 0; i < m_textures.size(); i++) {
+		if (m_textures[i].type == "diffuse") {
+			diffusionCount++; texturesCount = diffusionCount;
+		}
+		else if (m_textures[i].type == "specular") {
+			specularCount++; texturesCount = specularCount;
+		}
+		else {
+			normalCount++; texturesCount = normalCount;
+		}
+
+		glUniform1i(glGetUniformLocation(shaderProgram, (m_textures[i].type + std::to_string(texturesCount)).c_str()), i);
+		glActiveTexture(GL_TEXTURE0+i); glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
+		texturesCount = 0;
+	}
+	// Does the model have a diffusion/spec/normal map
+	glUniform1i(glGetUniformLocation(shaderProgram, "diffusionMapCount"), diffusionCount);
+	glUniform1i(glGetUniformLocation(shaderProgram, "specularMapCount"), specularCount);
+	glUniform1i(glGetUniformLocation(shaderProgram, "normalMapCount"), normalCount);
+
+	// Set uniforms
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "world"), 1, GL_FALSE, glm::value_ptr(worldPos));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(camera.m_pos));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(camera.m_projection));
+
+	glUniform3fv(glGetUniformLocation(shaderProgram, "cameraPos"), 1, glm::value_ptr(camera.m_loc));
+
+	// Bind VAO, draw
+	glBindVertexArray(m_VAO);
+	glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 /**
@@ -250,6 +297,19 @@ std::vector<Texture> Model::load_textures(aiMaterial* mat, aiTextureType type, s
 	}
 
 	return textures;
+}
+
+/**
+ * @brief Call draw function of all submeshes.
+ * 
+ * @param shaderProgram 
+ * @param camera 
+ */
+void Model::draw(unsigned int shaderProgram, Camera camera) {
+	// Draw every submesh
+	for (int i = 0; i < m_meshes.size(); i++) {
+		m_meshes[i].draw(shaderProgram, camera, m_worldPos);
+	}
 }
 
 /**

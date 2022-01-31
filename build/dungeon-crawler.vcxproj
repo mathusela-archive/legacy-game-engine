@@ -317,6 +317,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\source\standard-functions.cpp" />
     <ClCompile Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\source\glad.c" />
     <ClCompile Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\source\model.cpp" />
+    <ClCompile Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\source\camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\build\ZERO_CHECK.vcxproj">
