@@ -17,6 +17,8 @@
 #include <GLFW/glfw3.h>
 
 #include "headers/standard-functions.hpp"
+#include "headers/camera.hpp"
+#include "headers/model.hpp"
 
 const unsigned int WIDTH = 500;
 const unsigned int HEIGHT = 500;
