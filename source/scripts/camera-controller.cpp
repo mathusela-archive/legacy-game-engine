@@ -1,5 +1,21 @@
+/**
+ * @file camera-controller.cpp
+ * @author Matthew Richardson
+ * @brief File storing scripts related to camera control.
+ * @version 0.1
+ * @date 2022-01-31
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "headers/scripts/camera-controller.hpp"
 
+/**
+ * @brief Initiate initial screen settings for GLFW window. 
+ * 
+ * @param window 
+ */
 void camera_controller_init(GLFWwindow* window) {
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -17,6 +33,12 @@ Camera* varCamera;
 bool captureCursorToggle = true;
 int prevKey = 0;
 
+/**
+ * @brief Handle keyboard for camera control as well as calling mouse handler.
+ * 
+ * @param camera 
+ * @param window 
+ */
 void camera_controller(Camera* camera, GLFWwindow* window) {
     varCamera = camera;
 
@@ -74,6 +96,13 @@ float lasty = 700 / 2;
 
 const float sensitivity = 0.1f;
 
+/**
+ * @brief Handle mouse input for camera control.
+ * 
+ * @param window 
+ * @param xpos 
+ * @param ypos 
+ */
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
     float xoffset = xpos - lastx;
