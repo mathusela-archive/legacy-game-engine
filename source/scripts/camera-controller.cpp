@@ -40,6 +40,8 @@ int prevKey = 0;
  * @param window 
  */
 void camera_controller(Camera* camera, GLFWwindow* window) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
+
     varCamera = camera;
 
     float currentFrame = glfwGetTime();
@@ -104,7 +106,6 @@ const float sensitivity = 0.1f;
  * @param ypos 
  */
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-
     float xoffset = xpos - lastx;
     float yoffset = lasty - ypos;
     lastx = xpos;

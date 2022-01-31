@@ -36,8 +36,9 @@ GLFWwindow* create_window(unsigned int width, unsigned int height, char* title, 
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	glfwWindowHint(GLFW_SAMPLES, MSAA);
+    // TODO: Find a way to increase bit depth or add dithering to reduce colour banding.
 
-	auto window = glfwCreateWindow(width, height, title, NULL, NULL);
+	auto window = glfwCreateWindow(width, height, title, glfwGetPrimaryMonitor(), NULL);
 	glfwMakeContextCurrent(window);
 
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
