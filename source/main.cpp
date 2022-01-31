@@ -20,6 +20,7 @@
 #include "headers/standard-functions.hpp"
 #include "headers/camera.hpp"
 #include "headers/model.hpp"
+#include "headers/scripts/camera-controller.hpp"
 
 const unsigned int WIDTH = 1000;
 const unsigned int HEIGHT = 800;
@@ -36,6 +37,8 @@ int main() {
 
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		camera_controller(&camera, window);
 
 		test.draw(shaderProgram, camera);
 
