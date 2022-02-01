@@ -1,6 +1,7 @@
 #version 330 core
 
-out vec4 fColor;
+layout (location = 0) out vec4 fColor;
+layout (location = 1) out vec4 fBright;
 
 in vec2 fTexCoords;
 in vec3 fPos;
@@ -17,4 +18,5 @@ void main()
     vec3 mapped = vec3(1.0) - exp(-hdr * exposure);
 
     fColor = vec4(mapped, 1.0);
+    fBright = vec4(mapped, 1.0) * int(length(mapped) > 0.8);
 }  

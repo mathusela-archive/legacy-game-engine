@@ -19,11 +19,10 @@ class ScreenQuad {
 			};
 
 		unsigned int m_VAO;
-		unsigned int m_shaderProgram;
 
 		unsigned int create_vao(std::vector<float> verts);
 
-		void draw(unsigned int texture);
+		void draw(unsigned int shaderProgram, unsigned int texture);
 
-		ScreenQuad(unsigned int shaderProgram);
+		ScreenQuad();
 };

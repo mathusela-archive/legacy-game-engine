@@ -16,17 +16,16 @@
 
 #include "headers/standard-functions.hpp"
 
-void ScreenQuad::draw(unsigned int texture) {
+void ScreenQuad::draw(unsigned int shaderProgram, unsigned int texture) {
 	glBindVertexArray(m_VAO);
-	glUseProgram(m_shaderProgram);
-	glUniform1i(glGetUniformLocation(m_shaderProgram, "render"), 0);
+	glUseProgram(shaderProgram);
+	glUniform1i(glGetUniformLocation(shaderProgram, "render"), 0);
 	glActiveTexture(GL_TEXTURE0); glBindTexture(GL_TEXTURE_2D, texture);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-ScreenQuad::ScreenQuad(unsigned int shaderProgram) {
-	m_shaderProgram = shaderProgram;
+ScreenQuad::ScreenQuad() {
 	m_VAO = create_vao(m_mesh);
 }
 

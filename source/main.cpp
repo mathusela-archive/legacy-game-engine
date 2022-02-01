@@ -31,8 +31,13 @@ const std::string ROOT_DIR = "../../";
 
 int main() {
 	auto window = create_window(WIDTH, HEIGHT, TITLE, 4);
-	unsigned int hdrRenderTexture; 
-	auto hdrFramebuffer = create_framebuffer(hdrRenderTexture, WIDTH, HEIGHT);
+	unsigned int hdrRenderTexture; unsigned int brightPixels;
+	auto hdrFramebuffer = create_framebuffer(std::vector<unsigned int*> {&hdrRenderTexture, &brightPixels}, WIDTH, HEIGHT);
+	unsigned int blurTextures[2];
+	unsigned int blurFramebuffers[2] = {
+		create_framebuffer(std::vector<unsigned int*> {&blurTextures[0]}, WIDTH, HEIGHT),
+		create_framebuffer(std::vector<unsigned int*> {&blurTextures[1]}, WIDTH, HEIGHT)
+	};
 
 	auto shaderProgram = create_shader(ROOT_DIR + "resources/shaders/solid/vertex-shader.vert", ROOT_DIR + "resources/shaders/solid/fragment-shader.frag");
 	Camera camera(90.0f, WIDTH, HEIGHT, 0.02f, 100.0f, glm::vec3 {0.0, 1.0, 0.0}, glm::vec3 {0.0, 0.0, 1.0}); 
@@ -47,7 +52,8 @@ int main() {
 	};
 
 	auto hdrShader = create_shader(ROOT_DIR + "resources/shaders/hdr/vertex-shader.vert", ROOT_DIR + "resources/shaders/hdr/fragment-shader.frag");
-	ScreenQuad hdrQuad(hdrShader);
+	auto blurShader = create_shader(ROOT_DIR + "resources/shaders/blur/vertex-shader.vert", ROOT_DIR + "resources/shaders/blur/fragment-shader.frag");
+	ScreenQuad screenQuad;
 
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glEnable(GL_DEPTH_TEST);
@@ -80,11 +86,13 @@ int main() {
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
+
+		auto bluredTexture = run_gaussian_blur(blurShader, hdrRenderTexture, blurFramebuffers, blurTextures, 5);
 		
-		calculate_exposure(hdrFramebuffer, exposure, deltaTime, 0.5, 0.3, 5.0, 3.0);
+		calculate_exposure(hdrRenderTexture, exposure, deltaTime, 0.5, 0.3, 5.0, 3.0);
 		glUseProgram(hdrShader);
 		glUniform1f(glGetUniformLocation(hdrShader, "exposure"), exposure);
-		hdrQuad.draw(hdrRenderTexture);
+		screenQuad.draw(hdrShader, bluredTexture);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

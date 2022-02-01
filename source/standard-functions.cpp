@@ -11,8 +11,11 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 #include "headers/standard-functions.hpp"
+
+#include "headers/screen-quad.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -83,6 +86,18 @@ unsigned int create_texture(std::string imagePath) {
     return texture;
 }
 
+void bind_texture_to_framebuffer(unsigned int* textureOut, unsigned int width, unsigned int height, unsigned int textureIndex) {
+    glGenTextures(1, textureOut);
+    glBindTexture(GL_TEXTURE_2D, *textureOut);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + textureIndex, GL_TEXTURE_2D, *textureOut, 0);
+}
+
 /**
  * @brief Generate new framebuffer with RGBA16F colour attachment.
  * 
@@ -91,20 +106,12 @@ unsigned int create_texture(std::string imagePath) {
  * @param height 
  * @return FBO
  */
-unsigned int create_framebuffer(unsigned int& textureOut, unsigned int width, unsigned int height) {
+unsigned int create_framebuffer(std::vector<unsigned int*> texturesOut, unsigned int width, unsigned int height) {
     unsigned int FBO;
     glGenFramebuffers(1, &FBO);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-    glGenTextures(1, &textureOut);
-    glBindTexture(GL_TEXTURE_2D, textureOut);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureOut, 0);
+    for (int i=0; i<texturesOut.size(); i++) bind_texture_to_framebuffer(texturesOut[i], width, height, i);
 
     unsigned int RBO;
     glGenRenderbuffers(1, &RBO);
@@ -214,4 +221,31 @@ unsigned int create_shader(std::string vertexShaderPath, std::string fragmentSha
     glDeleteShader(fragmentShader);
 
     return shaderProgram;
+}
+
+/**
+ * @brief Run gaussian blur algorithm as a post processing step.
+ * 
+ * @param shaderProgram 
+ * @param initialTexture
+ * @param framebuffers 
+ * @param framebufferTextures 
+ * @param numOfIterations 
+ * 
+ * @return Blurred texture
+ */
+unsigned int run_gaussian_blur(unsigned int shaderProgram, unsigned int initialTexture, unsigned int framebuffers[2], unsigned int framebufferTextures[2], unsigned int numOfIterations) {
+    ScreenQuad screenQuad;
+    bool orientation = 1, firstRun = true;
+    for (unsigned int i=0; i < numOfIterations; i++) {
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffers[orientation]);
+        glUniform1i(glGetUniformLocation(shaderProgram, "orientation"), orientation);
+        glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+        screenQuad.draw(shaderProgram, firstRun ? initialTexture : framebufferTextures[!orientation]);
+        orientation = !orientation;
+        if (firstRun) firstRun = false;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    return framebufferTextures[orientation];
 }
