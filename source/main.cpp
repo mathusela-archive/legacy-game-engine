@@ -46,8 +46,8 @@ int main() {
 		Light {glm::vec3 {-100.0, 100.0, 80.0}, glm::vec3{0.71, 0.70, 0.50}, 8.0, DIRECTIONAL}
 	};
 
-	auto screenQuadShader = create_shader(ROOT_DIR + "resources/shaders/screen-quad/vertex-shader.vert", ROOT_DIR + "resources/shaders/screen-quad/fragment-shader.frag");
-	ScreenQuad screenQuad(screenQuadShader);
+	auto hdrShader = create_shader(ROOT_DIR + "resources/shaders/hdr/vertex-shader.vert", ROOT_DIR + "resources/shaders/hdr/fragment-shader.frag");
+	ScreenQuad hdrQuad(hdrShader);
 
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glEnable(GL_DEPTH_TEST);
@@ -82,9 +82,9 @@ int main() {
 		glDisable(GL_CULL_FACE);
 		
 		calculate_exposure(hdrFramebuffer, exposure, deltaTime, 0.5, 0.3, 5.0, 3.0);
-		glUseProgram(screenQuadShader);
-		glUniform1f(glGetUniformLocation(screenQuadShader, "exposure"), exposure);
-		screenQuad.draw(hdrRenderTexture);
+		glUseProgram(hdrShader);
+		glUniform1f(glGetUniformLocation(hdrShader, "exposure"), exposure);
+		hdrQuad.draw(hdrRenderTexture);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

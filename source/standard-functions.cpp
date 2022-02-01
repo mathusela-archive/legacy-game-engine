@@ -113,7 +113,6 @@ unsigned int create_framebuffer(unsigned int& textureOut, unsigned int width, un
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
 
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if(status != GL_FRAMEBUFFER_COMPLETE) std::cout << "AAA";
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     return FBO;
