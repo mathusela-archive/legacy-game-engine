@@ -84,6 +84,42 @@ unsigned int create_texture(std::string imagePath) {
 }
 
 /**
+ * @brief Generate new framebuffer with RGBA16F colour attachment.
+ * 
+ * @param textureOut Returns the attached texture.
+ * @param width 
+ * @param height 
+ * @return FBO
+ */
+unsigned int create_framebuffer(unsigned int& textureOut, unsigned int width, unsigned int height) {
+    unsigned int FBO;
+    glGenFramebuffers(1, &FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+    glGenTextures(1, &textureOut);
+    glBindTexture(GL_TEXTURE_2D, textureOut);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureOut, 0);
+
+    unsigned int RBO;
+    glGenRenderbuffers(1, &RBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, RBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
+
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if(status != GL_FRAMEBUFFER_COMPLETE) std::cout << "AAA";
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    return FBO;
+}
+
+/**
  * @brief Read in external text file in a format ready to be compiled as a shader.
  * 
  * @param inputPath 
@@ -105,7 +141,6 @@ std::string import_shader_source(std::string inputPath) {
     return inputText;
 }
 
-#define DEV
 /**
  * @brief Generate OpenGL shader program. 
  * 

@@ -21,6 +21,7 @@
 #include "headers/camera.hpp"
 #include "headers/model.hpp"
 #include "headers/scripts/camera-controller.hpp"
+#include "headers/screen-quad.hpp"
 
 const unsigned int WIDTH = 1920;
 const unsigned int HEIGHT = 1080;
@@ -30,14 +31,22 @@ const std::string ROOT_DIR = "../../";
 
 int main() {
 	auto window = create_window(WIDTH, HEIGHT, TITLE, 4);
+	unsigned int hdrRenderTexture; 
+	auto hdrFramebuffer = create_framebuffer(hdrRenderTexture, WIDTH, HEIGHT);
 
 	auto shaderProgram = create_shader(ROOT_DIR + "resources/shaders/solid/vertex-shader.vert", ROOT_DIR + "resources/shaders/solid/fragment-shader.frag");
-	Camera camera(90.0f, WIDTH, HEIGHT, 0.02f, 100.0f, glm::vec3 {0.0, 0.0, 0.0}, glm::vec3 {0.0, 0.0, 1.0}); 
-	Model cube(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 0.0, 10.0});
-	Model plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, 0.0, 0.0));
+	Camera camera(90.0f, WIDTH, HEIGHT, 0.02f, 100.0f, glm::vec3 {0.0, 1.0, 0.0}, glm::vec3 {0.0, 0.0, 1.0}); 
+	Model cube(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 1.0, 10.0});
+	Model plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, 0.0, 0.0)); plane.set_scale(glm::vec3(10.0));
+	Model hut(ROOT_DIR + "resources/models/hut/HutHigh.obj", glm::vec3(0.0, 0.0, 0.0)); hut.set_scale(glm::vec3(0.4));
 	std::vector<Light> sceneLights = {
-		Light {glm::vec3{5.0, 5.0, 8.0}, glm::vec3{1.0, 1.0, 1.0}, POINT}
+		Light {glm::vec3{5.0, 5.0, 8.0}, glm::vec3{1.0, 1.0, 1.0}, POINT},
+		Light {glm::vec3{-5.0, 5.0, 8.0}, glm::vec3{0.0, 1.0, 1.0}, POINT},
+		Light {glm::vec3{-10.0, 1.0, -1.0}, glm::vec3{0.0, 1.0, 0.0}, POINT}
 	};
+
+	auto screenQuadShader = create_shader(ROOT_DIR + "resources/shaders/screen-quad/vertex-shader.vert", ROOT_DIR + "resources/shaders/screen-quad/fragment-shader.frag");
+	ScreenQuad screenQuad(screenQuadShader);
 
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glEnable(GL_DEPTH_TEST);
@@ -47,12 +56,22 @@ int main() {
 	glfwSwapInterval(0);
 
 	while (!glfwWindowShouldClose(window)) {
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		glBindFramebuffer(GL_FRAMEBUFFER, hdrFramebuffer);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		camera_controller(&camera, window);
 
 		cube.draw(shaderProgram, camera, sceneLights);
 		plane.draw(shaderProgram, camera, sceneLights);
+		hut.draw(shaderProgram, camera, sceneLights);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+		screenQuad.draw(hdrRenderTexture);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
