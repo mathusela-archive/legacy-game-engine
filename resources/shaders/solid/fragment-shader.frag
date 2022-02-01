@@ -25,6 +25,7 @@ out vec4 FragColor;
 struct Light {
    vec3 position;
    vec3 color;
+   float power;
    int type;
 };
 
@@ -64,7 +65,7 @@ void main() {
       float specularPower = pow(max(dot(unitNormal, halfwayDir), 0.0), shininess);
       vec3 specularComponent = specularStrength * specularPower * attenuation * specularMap;
 
-      lighting += (vec3(diffuseComponent) + specularComponent) * sceneLights[i].color;
+      lighting += ((vec3(diffuseComponent) + specularComponent) * sceneLights[i].color) * sceneLights[i].power;
    }
 
    // Set fragment color

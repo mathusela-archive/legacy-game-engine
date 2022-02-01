@@ -114,10 +114,12 @@ void Mesh::draw(unsigned int shaderProgram, Camera camera, glm::mat4 worldPos, s
 	for (int i=0; i<sceneLights.size(); i++) {
 		std::string posName = "sceneLights[" + std::to_string(i) + "].position";
 		std::string colorName = "sceneLights[" + std::to_string(i) + "].color";
+		std::string powerName = "sceneLights[" + std::to_string(i) + "].power";
 		std::string typeName = "sceneLights[" + std::to_string(i) + "].type";
 
 		glUniform3fv(glGetUniformLocation(shaderProgram, posName.c_str()), 1, glm::value_ptr(sceneLights[i].location));
 		glUniform3fv(glGetUniformLocation(shaderProgram, colorName.c_str()), 1, glm::value_ptr(sceneLights[i].color));
+		glUniform1f(glGetUniformLocation(shaderProgram, powerName.c_str()), sceneLights[i].power);
 		glUniform1i(glGetUniformLocation(shaderProgram, typeName.c_str()), sceneLights[i].type);
 	}
 	glUniform1i(glGetUniformLocation(shaderProgram, "lightsCount"), sceneLights.size());

@@ -40,9 +40,9 @@ int main() {
 	Model plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, 0.0, 0.0)); plane.set_scale(glm::vec3(10.0));
 	Model hut(ROOT_DIR + "resources/models/hut/HutHigh.obj", glm::vec3(0.0, 0.0, 0.0)); hut.set_scale(glm::vec3(0.4));
 	std::vector<Light> sceneLights = {
-		Light {glm::vec3{5.0, 5.0, 8.0}, glm::vec3{1.0, 1.0, 1.0}, POINT},
-		Light {glm::vec3{-5.0, 5.0, 8.0}, glm::vec3{0.0, 1.0, 1.0}, POINT},
-		Light {glm::vec3{-10.0, 1.0, -1.0}, glm::vec3{0.0, 1.0, 0.0}, POINT}
+		Light {glm::vec3{5.0, 5.0, 8.0}, glm::vec3{1.0, 1.0, 1.0}, 10.0, POINT},
+		Light {glm::vec3{-5.0, 5.0, 8.0}, glm::vec3{0.0, 1.0, 1.0}, 1.0, POINT},
+		Light {glm::vec3{-10.0, 1.0, -1.0}, glm::vec3{0.0, 1.0, 0.0}, 1.0, POINT}
 	};
 
 	auto screenQuadShader = create_shader(ROOT_DIR + "resources/shaders/screen-quad/vertex-shader.vert", ROOT_DIR + "resources/shaders/screen-quad/fragment-shader.frag");

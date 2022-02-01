@@ -36,5 +36,6 @@ enum t_LightType {POINT, DIRECTIONAL};
 struct Light {
 	glm::vec3 location;
 	glm::vec3 color;
+	float power;
 	t_LightType type;
 };

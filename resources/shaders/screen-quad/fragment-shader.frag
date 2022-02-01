@@ -7,8 +7,14 @@ in vec3 fPos;
 
 uniform sampler2D render;
 
+float exposure = 1.0;
+
 void main()
 {
-    fColor = texture(render, fTexCoords);
-    // fColor = vec4(1.0, 1.0, 1.0, 1.0);
+    vec3 hdr = texture(render, fTexCoords).rgb; 
+
+    // exposure tone mapping
+    vec3 mapped = vec3(1.0) - exp(-hdr * exposure);
+
+    fColor = vec4(mapped, 1.0);
 }  
