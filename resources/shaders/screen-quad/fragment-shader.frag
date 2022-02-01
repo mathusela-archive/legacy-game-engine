@@ -7,7 +7,7 @@ in vec3 fPos;
 
 uniform sampler2D render;
 
-float exposure = 1.0;
+uniform float exposure;
 
 void main()
 {

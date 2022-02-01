@@ -40,22 +40,31 @@ int main() {
 	Model plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, 0.0, 0.0)); plane.set_scale(glm::vec3(10.0));
 	Model hut(ROOT_DIR + "resources/models/hut/HutHigh.obj", glm::vec3(0.0, 0.0, 0.0)); hut.set_scale(glm::vec3(0.4));
 	std::vector<Light> sceneLights = {
-		Light {glm::vec3{5.0, 5.0, 8.0}, glm::vec3{1.0, 1.0, 1.0}, 10.0, POINT},
+		Light {glm::vec3{5.0, 5.0, 8.0}, glm::vec3{1.0, 1.0, 1.0}, 1.0, POINT},
 		Light {glm::vec3{-5.0, 5.0, 8.0}, glm::vec3{0.0, 1.0, 1.0}, 1.0, POINT},
-		Light {glm::vec3{-10.0, 1.0, -1.0}, glm::vec3{0.0, 1.0, 0.0}, 1.0, POINT}
+		Light {glm::vec3{-10.0, 1.0, -1.0}, glm::vec3{0.0, 1.0, 0.0}, 1.0, POINT},
+		Light {glm::vec3 {-100.0, 100.0, 80.0}, glm::vec3{0.71, 0.70, 0.50}, 8.0, DIRECTIONAL}
 	};
 
 	auto screenQuadShader = create_shader(ROOT_DIR + "resources/shaders/screen-quad/vertex-shader.vert", ROOT_DIR + "resources/shaders/screen-quad/fragment-shader.frag");
 	ScreenQuad screenQuad(screenQuadShader);
 
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
 
 	glfwSwapInterval(0);
 
+	float exposure = 1.0;
+	float lastFrame = 0.0;
+	float deltaTime;
+	
 	while (!glfwWindowShouldClose(window)) {
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glBindFramebuffer(GL_FRAMEBUFFER, hdrFramebuffer);
@@ -71,6 +80,10 @@ int main() {
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
+		
+		calculate_exposure(hdrFramebuffer, exposure, deltaTime, 0.5, 0.3, 5.0, 3.0);
+		glUseProgram(screenQuadShader);
+		glUniform1f(glGetUniformLocation(screenQuadShader, "exposure"), exposure);
 		screenQuad.draw(hdrRenderTexture);
 
 		glfwSwapBuffers(window);

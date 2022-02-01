@@ -19,6 +19,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
+
 /**
  * @brief Create and configure a GLFW window.
  * 
@@ -36,7 +37,6 @@ GLFWwindow* create_window(unsigned int width, unsigned int height, char* title, 
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	glfwWindowHint(GLFW_SAMPLES, MSAA);
-    // TODO: Find a way to increase bit depth or add dithering to reduce colour banding.
 
 	auto window = glfwCreateWindow(width, height, title, glfwGetPrimaryMonitor(), NULL);
 	glfwMakeContextCurrent(window);
@@ -117,6 +117,28 @@ unsigned int create_framebuffer(unsigned int& textureOut, unsigned int width, un
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     return FBO;
+}
+
+/**
+ * @brief Calculates exposure from average brightness of OpenGL texture. Linearly interpolates at a given speed. 
+ * 
+ * @param texture 
+ * @param exposure Returns exposure.
+ * @param deltaTime 
+ * @param averageLevel Average brightness level.
+ * @param lowClip Lowest exposure.
+ * @param highClip Highest exposure.
+ * @param speed Rate of change of exposure.
+ */
+void calculate_exposure(unsigned int texture, float& exposure, float deltaTime, float averageLevel, float lowClip, float highClip, float speed) {
+    float pixels[4];
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glGetTexImage(GL_TEXTURE_2D, 10, GL_RGBA, GL_FLOAT, &pixels[0]);
+
+    const float luminance = (pixels[0] + pixels[1] + pixels[2]) / 3.0;
+    exposure -= speed * deltaTime * (exposure - (averageLevel / luminance));
+    exposure = exposure < lowClip ? lowClip : (exposure > highClip ? highClip : exposure);
 }
 
 /**
