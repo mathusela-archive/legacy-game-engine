@@ -55,5 +55,5 @@ public:
 
 	void set_loc(glm::vec3 loc);
 	void set_scale(glm::vec3 scale);
-
+	void Model::set_rot(float angle, glm::vec3 rotationAxis);
 };

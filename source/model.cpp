@@ -335,7 +335,12 @@ void Model::draw(unsigned int shaderProgram, Camera camera, std::vector<Light> s
 void Model::set_loc(glm::vec3 loc) {
 	// Set models world pos
 	m_loc = loc;
+	m_worldPos = glm::mat4(1.0);
 	m_worldPos = glm::translate(m_worldPos, loc);
+}
+
+void Model::set_rot(float angle, glm::vec3 rotationAxis) {
+	m_worldPos = glm::rotate(m_worldPos, angle, rotationAxis);
 }
 
 /**

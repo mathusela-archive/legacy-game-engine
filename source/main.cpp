@@ -22,6 +22,7 @@
 #include "headers/model.hpp"
 #include "headers/scripts/camera-controller.hpp"
 #include "headers/screen-quad.hpp"
+#include "headers/physics-functions.hpp"
 
 const unsigned int WIDTH = 1920;
 const unsigned int HEIGHT = 1080;
@@ -30,6 +31,7 @@ char TITLE[] = "Dungeon Crawler";
 const std::string ROOT_DIR = "../../";
 
 int main() {
+	// Rendering
 	auto window = create_window(WIDTH, HEIGHT, TITLE, 4);
 	unsigned int renderTexture;
 	auto renderFramebuffer = create_framebuffer(std::vector<unsigned int*> {&renderTexture}, WIDTH, HEIGHT);
@@ -59,6 +61,21 @@ int main() {
 	auto bloomShader = create_shader(ROOT_DIR + "resources/shaders/bloom/vertex-shader.vert", ROOT_DIR + "resources/shaders/bloom/fragment-shader.frag");
 	ScreenQuad screenQuad;
 
+	// Physics
+	auto dynamicsWorld = create_physics_world();
+	btAlignedObjectArray<btCollisionShape*> collisionShapes;
+
+	auto groundCollisionShape = new btBoxShape(btVector3(50.0, 4.0, 50.0));
+	auto boxCollisionShape = new btBoxShape(btVector3(1.0, 1.0, 1.0));
+	collisionShapes.push_back(groundCollisionShape);
+	collisionShapes.push_back(boxCollisionShape);
+
+	auto ground = create_rigidbody(collisionShapes[0], btVector3(0, -4, 10), 0.0);
+	dynamicsWorld -> addRigidBody(ground);
+	auto body = create_rigidbody(collisionShapes[1], btVector3(0, 10, 10), 1.0);
+	dynamicsWorld -> addRigidBody(body);
+
+	// Gameloop
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -71,10 +88,22 @@ int main() {
 	float deltaTime;
 	
 	while (!glfwWindowShouldClose(window)) {
+		// Time
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
+		// Physics
+		dynamicsWorld -> stepSimulation(deltaTime);
+
+		btTransform trans;
+		auto physicsBody = btRigidBody::upcast(dynamicsWorld->getCollisionObjectArray()[1]);
+		physicsBody -> getMotionState() -> getWorldTransform(trans);
+		cube.set_loc(glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+		cube.set_rot(trans.getRotation().getAngle(), glm::vec3(trans.getRotation().getAxis().getX(), trans.getRotation().getAxis().getY(), trans.getRotation().getAxis().getZ()));
+		if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {physicsBody -> activate(true); physicsBody -> applyForce(btVector3(10.0, 0.0, 0.0), btVector3(0.9, 0.9, 0.0));}
+
+		// Render
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
@@ -107,6 +136,21 @@ int main() {
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+	}
+
+	// Cleanup
+	for (int i=dynamicsWorld -> getNumCollisionObjects()-1; i>=0; i--) {
+		btCollisionObject* obj = dynamicsWorld -> getCollisionObjectArray()[i];
+		btRigidBody* body = btRigidBody::upcast(obj);
+		delete body -> getMotionState();
+		dynamicsWorld -> removeCollisionObject(obj);
+		delete obj;
+	}
+
+	for (int i=0; i<collisionShapes.size(); i++) {
+		btCollisionShape* shape = collisionShapes[i];
+		collisionShapes[i] = 0;
+		delete shape;
 	}
 
 	return 0;
