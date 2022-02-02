@@ -86,7 +86,6 @@ int main() {
 		plane.draw(shaderProgram, camera, sceneLights);
 		hut.draw(shaderProgram, camera, sceneLights);
 
-		auto bluredTexture = run_gaussian_blur(blurShader, brightPixelsTexture, blurFramebuffers, blurTextures, 10);
 		glBindFramebuffer(GL_FRAMEBUFFER, hdrFramebuffer);
 
 		glDisable(GL_DEPTH_TEST);
@@ -97,6 +96,7 @@ int main() {
 		glUniform1f(glGetUniformLocation(hdrShader, "exposure"), exposure);
 		screenQuad.draw(hdrShader, renderTexture);
 
+		auto bluredTexture = run_gaussian_blur(blurShader, brightPixelsTexture, blurFramebuffers, blurTextures, 10);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glUseProgram(bloomShader);
