@@ -7,7 +7,7 @@ enable_testing()
 include_directories("./include/")
 link_directories("./libs/")
 
-link_libraries(glfw3 assimp-vc140-mt opengl32 gdi32)
+link_libraries(glfw3 assimp-vc140-mt opengl32 gdi32 BulletCollision_Debug Bullet3Common BulletDynamics_Debug LinearMath_Debug)
 
 add_executable(dungeon-crawler ./source/main.cpp ./source/standard-functions.cpp ./source/glad.c ./source/model.cpp ./source/camera.cpp ./source/scripts/camera-controller.cpp ./source/screen-quad.cpp)
 

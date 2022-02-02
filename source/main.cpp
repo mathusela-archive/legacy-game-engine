@@ -50,7 +50,7 @@ int main() {
 		Light {glm::vec3{5.0, 5.0, 8.0}, glm::vec3{1.0, 1.0, 1.0}, 1.0, POINT},
 		Light {glm::vec3{-5.0, 5.0, 8.0}, glm::vec3{0.0, 1.0, 1.0}, 1.0, POINT},
 		Light {glm::vec3{-10.0, 1.0, -1.0}, glm::vec3{0.0, 1.0, 0.0}, 1.0, POINT},
-		Light {glm::vec3 {-100.0, 100.0, 80.0}, glm::vec3{0.71, 0.70, 0.50}, 8.0, DIRECTIONAL}
+		Light {glm::vec3 {-100.0, 100.0, 80.0}, glm::vec3{0.71, 0.50, 0.50}, 8.0, DIRECTIONAL}
 	};
 
 	auto hdrShader = create_shader(ROOT_DIR + "resources/shaders/hdr/vertex-shader.vert", ROOT_DIR + "resources/shaders/hdr/fragment-shader.frag");
@@ -86,7 +86,7 @@ int main() {
 		plane.draw(shaderProgram, camera, sceneLights);
 		hut.draw(shaderProgram, camera, sceneLights);
 
-		auto bluredTexture = run_gaussian_blur(blurShader, brightPixelsTexture, blurFramebuffers, blurTextures, 5);
+		auto bluredTexture = run_gaussian_blur(blurShader, brightPixelsTexture, blurFramebuffers, blurTextures, 10);
 		glBindFramebuffer(GL_FRAMEBUFFER, hdrFramebuffer);
 
 		glDisable(GL_DEPTH_TEST);

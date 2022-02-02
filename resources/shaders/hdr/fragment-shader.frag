@@ -9,7 +9,7 @@ in vec3 fPos;
 uniform sampler2D render;
 
 uniform float exposure;
-float bloomThreshold = 6.0;
+float bloomThreshold = 7.0;
 
 void main()
 {
