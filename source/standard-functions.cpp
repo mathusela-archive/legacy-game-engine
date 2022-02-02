@@ -93,7 +93,6 @@ void bind_texture_to_framebuffer(unsigned int* textureOut, unsigned int width, u
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + textureIndex, GL_TEXTURE_2D, *textureOut, 0);
 }
@@ -119,7 +118,9 @@ unsigned int create_framebuffer(std::vector<unsigned int*> texturesOut, unsigned
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
 
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    std::vector<unsigned int> buffers;
+    for (int i=0; i<texturesOut.size(); i++) buffers.push_back(GL_COLOR_ATTACHMENT0 + i);
+    glDrawBuffers(2, &buffers[0]);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     return FBO;

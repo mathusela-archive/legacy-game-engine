@@ -9,6 +9,7 @@ in vec3 fPos;
 uniform sampler2D render;
 
 uniform float exposure;
+float bloomThreshold = 6.0;
 
 void main()
 {
@@ -18,5 +19,5 @@ void main()
     vec3 mapped = vec3(1.0) - exp(-hdr * exposure);
 
     fColor = vec4(mapped, 1.0);
-    fBright = vec4(mapped, 1.0) * int(length(mapped) > 0.8);
+    fBright = vec4(mapped, 1.0) * int(length(hdr) > bloomThreshold);
 }  

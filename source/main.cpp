@@ -31,11 +31,13 @@ const std::string ROOT_DIR = "../../";
 
 int main() {
 	auto window = create_window(WIDTH, HEIGHT, TITLE, 4);
-	unsigned int hdrRenderTexture; unsigned int brightPixels;
-	auto hdrFramebuffer = create_framebuffer(std::vector<unsigned int*> {&hdrRenderTexture, &brightPixels}, WIDTH, HEIGHT);
+	unsigned int renderTexture;
+	auto renderFramebuffer = create_framebuffer(std::vector<unsigned int*> {&renderTexture}, WIDTH, HEIGHT);
+	unsigned int hdrRenderTexture; unsigned int brightPixelsTexture;
+	auto hdrFramebuffer = create_framebuffer(std::vector<unsigned int*> {&hdrRenderTexture, &brightPixelsTexture}, WIDTH, HEIGHT);
 	unsigned int blurTextures[2];
 	unsigned int blurFramebuffers[2] = {
-		create_framebuffer(std::vector<unsigned int*> {&blurTextures[0]}, WIDTH, HEIGHT),
+		create_framebuffer( std::vector<unsigned int*> {&blurTextures[0]}, WIDTH, HEIGHT),
 		create_framebuffer(std::vector<unsigned int*> {&blurTextures[1]}, WIDTH, HEIGHT)
 	};
 
@@ -53,6 +55,8 @@ int main() {
 
 	auto hdrShader = create_shader(ROOT_DIR + "resources/shaders/hdr/vertex-shader.vert", ROOT_DIR + "resources/shaders/hdr/fragment-shader.frag");
 	auto blurShader = create_shader(ROOT_DIR + "resources/shaders/blur/vertex-shader.vert", ROOT_DIR + "resources/shaders/blur/fragment-shader.frag");
+	auto standardPostprocessingShader = create_shader(ROOT_DIR + "resources/shaders/standard-postprocessing/vertex-shader.vert", ROOT_DIR + "resources/shaders/standard-postprocessing/fragment-shader.frag");
+	auto bloomShader = create_shader(ROOT_DIR + "resources/shaders/bloom/vertex-shader.vert", ROOT_DIR + "resources/shaders/bloom/fragment-shader.frag");
 	ScreenQuad screenQuad;
 
 	glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -62,7 +66,7 @@ int main() {
 
 	glfwSwapInterval(0);
 
-	float exposure = 1.0;
+	float exposure = 0.3;
 	float lastFrame = 0.0;
 	float deltaTime;
 	
@@ -73,7 +77,7 @@ int main() {
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
-		glBindFramebuffer(GL_FRAMEBUFFER, hdrFramebuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		camera_controller(&camera, window);
@@ -82,17 +86,24 @@ int main() {
 		plane.draw(shaderProgram, camera, sceneLights);
 		hut.draw(shaderProgram, camera, sceneLights);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		auto bluredTexture = run_gaussian_blur(blurShader, brightPixelsTexture, blurFramebuffers, blurTextures, 5);
+		glBindFramebuffer(GL_FRAMEBUFFER, hdrFramebuffer);
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
-
-		auto bluredTexture = run_gaussian_blur(blurShader, hdrRenderTexture, blurFramebuffers, blurTextures, 5);
 		
-		calculate_exposure(hdrRenderTexture, exposure, deltaTime, 0.5, 0.3, 5.0, 3.0);
+		calculate_exposure(renderTexture, exposure, deltaTime, 0.5, 0.3, 5.0, 3.0);
 		glUseProgram(hdrShader);
 		glUniform1f(glGetUniformLocation(hdrShader, "exposure"), exposure);
-		screenQuad.draw(hdrShader, bluredTexture);
+		screenQuad.draw(hdrShader, renderTexture);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glUseProgram(bloomShader);
+		glUniform1f(glGetUniformLocation(bloomShader, "exposure"), exposure);
+		glUniform1i(glGetUniformLocation(bloomShader, "blur"), 1);
+		glActiveTexture(GL_TEXTURE1); glBindTexture(GL_TEXTURE_2D, bluredTexture);
+		screenQuad.draw(bloomShader, hdrRenderTexture);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
