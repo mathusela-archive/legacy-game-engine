@@ -34,7 +34,7 @@ public:
  * 
  */
 class Model {
-private:
+protected:
 	glm::vec3 m_loc;
 	glm::mat4 m_worldPos;
 

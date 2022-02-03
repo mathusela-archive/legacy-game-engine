@@ -23,6 +23,7 @@
 #include "headers/scripts/camera-controller.hpp"
 #include "headers/screen-quad.hpp"
 #include "headers/physics-functions.hpp"
+#include "headers/object.hpp"
 
 const unsigned int WIDTH = 1920;
 const unsigned int HEIGHT = 1080;
@@ -45,8 +46,6 @@ int main() {
 
 	auto shaderProgram = create_shader(ROOT_DIR + "resources/shaders/solid/vertex-shader.vert", ROOT_DIR + "resources/shaders/solid/fragment-shader.frag");
 	Camera camera(90.0f, WIDTH, HEIGHT, 0.02f, 100.0f, glm::vec3 {0.0, 1.0, 0.0}, glm::vec3 {0.0, 0.0, 1.0}); 
-	Model cube(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 1.0, 10.0});
-	Model plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, 0.0, 0.0)); plane.set_scale(glm::vec3(10.0));
 	Model hut(ROOT_DIR + "resources/models/hut/HutHigh.obj", glm::vec3(0.0, 0.0, 0.0)); hut.set_scale(glm::vec3(0.4));
 	std::vector<Light> sceneLights = {
 		Light {glm::vec3{5.0, 5.0, 8.0}, glm::vec3{1.0, 1.0, 1.0}, 1.0, POINT},
@@ -65,15 +64,13 @@ int main() {
 	auto dynamicsWorld = create_physics_world();
 	btAlignedObjectArray<btCollisionShape*> collisionShapes;
 
-	auto groundCollisionShape = new btBoxShape(btVector3(50.0, 4.0, 50.0));
+	auto groundCollisionShape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
 	auto boxCollisionShape = new btBoxShape(btVector3(1.0, 1.0, 1.0));
 	collisionShapes.push_back(groundCollisionShape);
 	collisionShapes.push_back(boxCollisionShape);
 
-	auto ground = create_rigidbody(collisionShapes[0], btVector3(0, -4, 10), 0.0);
-	dynamicsWorld -> addRigidBody(ground);
-	auto body = create_rigidbody(collisionShapes[1], btVector3(0, 10, 10), 1.0);
-	dynamicsWorld -> addRigidBody(body);
+	Object cube(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 10.0, 10.0}, boxCollisionShape, 1.0, dynamicsWorld);
+	Object plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, 0.0, 0.0), groundCollisionShape, 0.0, dynamicsWorld); plane.set_scale(glm::vec3(10.0));
 
 	// Gameloop
 	glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -96,12 +93,8 @@ int main() {
 		// Physics
 		dynamicsWorld -> stepSimulation(deltaTime);
 
-		btTransform trans;
-		auto physicsBody = btRigidBody::upcast(dynamicsWorld->getCollisionObjectArray()[1]);
-		physicsBody -> getMotionState() -> getWorldTransform(trans);
-		cube.set_loc(glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
-		cube.set_rot(trans.getRotation().getAngle(), glm::vec3(trans.getRotation().getAxis().getX(), trans.getRotation().getAxis().getY(), trans.getRotation().getAxis().getZ()));
-		if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {physicsBody -> activate(true); physicsBody -> applyForce(btVector3(10.0, 0.0, 0.0), btVector3(0.9, 0.9, 0.0));}
+		cube.update_render_to_physics();
+		if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {cube.m_rigidbody -> activate(true); cube.m_rigidbody -> applyTorque(btVector3(0.0, 0.0, 20.0));}
 
 		// Render
 		glEnable(GL_DEPTH_TEST);

@@ -25,6 +25,9 @@
     <ClCompile Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\source\physics-functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\source\object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\Programming\C++\code\ALevelProgrammingProject\dungeon-crawler\CMakeLists.txt" />
