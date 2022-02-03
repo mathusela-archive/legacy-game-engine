@@ -125,6 +125,10 @@ int main() {
 		glUniform1f(glGetUniformLocation(hdrShader, "exposure"), exposure);
 		screenQuad.draw(hdrShader, renderTexture);
 
+		// FIXME: Fix bloom clipping by making blur textures hdr.
+		// SHOULD BE FIXED ### Lighting doesn't change with rotation ### I think its directional lights specifically
+		// TODO: Look into compound shapes for statics. And/or use triangle mesh colliders: https://docs.panda3d.org/1.10/python/programming/physics/bullet/collision-shapes
+		// TODO: Make a class which inherits from Model and RigidBody to combine rendering and physics more cleanly.
 		auto bluredTexture = run_gaussian_blur(blurShader, brightPixelsTexture, blurFramebuffers, blurTextures, 10);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

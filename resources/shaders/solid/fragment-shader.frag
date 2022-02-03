@@ -42,12 +42,14 @@ uniform vec3 cameraPos;
 uniform Light sceneLights[MAX_LIGHTS];
 uniform int lightsCount;
 
+uniform mat4 world;
+
 void main() {
    vec3 lighting = vec3(0.0);
 
    // Calculate lighting for every source
    for (int i=0; i<lightsCount; i++) {
-      vec3 unitNormal = int(!(normalMapCount == 0))*normalize(TBN*(texture(normal1, fUV).rgb * 2.0 -1.0)) + int(normalMapCount == 0)*normalize(fNormal);
+      vec3 unitNormal = normalize(vec3(world * vec4(int(!(normalMapCount == 0))*normalize(TBN*(texture(normal1, fUV).rgb * 2.0 -1.0)) + int(normalMapCount == 0)*normalize(fNormal), 0.0)));
       vec3 lightDir = int(sceneLights[i].type == POINT)*normalize(sceneLights[i].position - fPos) + int(sceneLights[i].type == DIRECTIONAL)*normalize(sceneLights[i].position);
       vec3 cameraDir = normalize(cameraPos - fPos);
       vec3 halfwayDir = normalize(lightDir + cameraDir);
