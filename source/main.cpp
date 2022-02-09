@@ -24,6 +24,7 @@
 #include "headers/screen-quad.hpp"
 #include "headers/physics-functions.hpp"
 #include "headers/object.hpp"
+#include "headers/scripts/character-controller.hpp"
 
 const unsigned int WIDTH = 1920;
 const unsigned int HEIGHT = 1080;
@@ -40,7 +41,7 @@ int main() {
 	auto hdrFramebuffer = create_framebuffer(std::vector<unsigned int*> {&hdrRenderTexture, &brightPixelsTexture}, WIDTH, HEIGHT);
 	unsigned int blurTextures[2];
 	unsigned int blurFramebuffers[2] = {
-		create_framebuffer( std::vector<unsigned int*> {&blurTextures[0]}, WIDTH, HEIGHT),
+		create_framebuffer(std::vector<unsigned int*> {&blurTextures[0]}, WIDTH, HEIGHT),
 		create_framebuffer(std::vector<unsigned int*> {&blurTextures[1]}, WIDTH, HEIGHT)
 	};
 
@@ -64,13 +65,17 @@ int main() {
 	auto dynamicsWorld = create_physics_world();
 	btAlignedObjectArray<btCollisionShape*> collisionShapes;
 
-	auto groundCollisionShape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
+	auto groundCollisionShape = new btBoxShape(btVector3(50, 4, 50));
 	auto boxCollisionShape = new btBoxShape(btVector3(1.0, 1.0, 1.0));
+	auto playerCollisionShape = new btCapsuleShape(0.3, 1.0);
 	collisionShapes.push_back(groundCollisionShape);
 	collisionShapes.push_back(boxCollisionShape);
+	collisionShapes.push_back(playerCollisionShape);
 
-	Object cube(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 10.0, 10.0}, boxCollisionShape, 1.0, dynamicsWorld);
-	Object plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, 0.0, 0.0), groundCollisionShape, 0.0, dynamicsWorld); plane.set_scale(glm::vec3(10.0));
+	Object cube(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 10.0, 0.0}, boxCollisionShape, 1.0, dynamicsWorld);
+	Object cube1(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 1.0, 10.0}, boxCollisionShape, 0.0, dynamicsWorld);
+	Object plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, -4.0, 0.0), groundCollisionShape, 0.0, dynamicsWorld); plane.set_loc(glm::vec3(0.0, 0.0, 0.0)); plane.set_scale(glm::vec3(10.0));
+	Object player("", glm::vec3(0.0, 1.0, 0.0), playerCollisionShape, 1.0, dynamicsWorld);
 
 	// Gameloop
 	glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -78,13 +83,15 @@ int main() {
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
 
-	glfwSwapInterval(0);
+	// glfwSwapInterval(0);
 
 	float exposure = 0.3;
 	float lastFrame = 0.0;
 	float deltaTime;
 	
 	while (!glfwWindowShouldClose(window)) {
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
+		
 		// Time
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -94,7 +101,10 @@ int main() {
 		dynamicsWorld -> stepSimulation(deltaTime);
 
 		cube.update_render_to_physics();
+		cube1.update_render_to_physics();
+		player.update_render_to_physics();
 		if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {cube.m_rigidbody -> activate(true); cube.m_rigidbody -> applyTorque(btVector3(0.0, 0.0, 20.0));}
+		character_controller(&camera, window, player, deltaTime, playerCollisionShape, 1.0, dynamicsWorld);
 
 		// Render
 		glEnable(GL_DEPTH_TEST);
@@ -102,9 +112,10 @@ int main() {
 		glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		camera_controller(&camera, window);
+		// camera_controller(&camera, window);
 
 		cube.draw(shaderProgram, camera, sceneLights);
+		cube1.draw(shaderProgram, camera, sceneLights);
 		plane.draw(shaderProgram, camera, sceneLights);
 		hut.draw(shaderProgram, camera, sceneLights);
 
@@ -118,10 +129,9 @@ int main() {
 		glUniform1f(glGetUniformLocation(hdrShader, "exposure"), exposure);
 		screenQuad.draw(hdrShader, renderTexture);
 
-		// FIXME: Fix bloom clipping by making blur textures hdr.
-		// SHOULD BE FIXED ### Lighting doesn't change with rotation ### I think its directional lights specifically
+		// FIXME: Physics too slow under 60hz.
+		// FIXME: Scaling not working with physics (update_render_to_physics).
 		// TODO: Look into compound shapes for statics. And/or use triangle mesh colliders: https://docs.panda3d.org/1.10/python/programming/physics/bullet/collision-shapes
-		// TODO: Make a class which inherits from Model and RigidBody to combine rendering and physics more cleanly.
 		auto bluredTexture = run_gaussian_blur(blurShader, brightPixelsTexture, blurFramebuffers, blurTextures, 10);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

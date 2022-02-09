@@ -143,7 +143,7 @@ void Mesh::draw(unsigned int shaderProgram, Camera camera, glm::mat4 worldPos, s
  * @param spawnLocation 
  */
 Model::Model(std::string path, glm::vec3 spawnLocation) {
-	load_model(path);
+	if(path != "") load_model(path);
 
 	m_worldPos = glm::mat4(1.0);
 	set_loc(spawnLocation);
