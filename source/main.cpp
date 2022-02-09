@@ -73,7 +73,7 @@ int main() {
 	collisionShapes.push_back(playerCollisionShape);
 
 	Object cube(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 10.0, 0.0}, boxCollisionShape, 1.0, dynamicsWorld);
-	Object cube1(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 1.0, 10.0}, boxCollisionShape, 0.0, dynamicsWorld);
+	Object cube1(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 5.0, 10.0}, boxCollisionShape, 0.0, dynamicsWorld);
 	Object plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, -4.0, 0.0), groundCollisionShape, 0.0, dynamicsWorld); plane.set_loc(glm::vec3(0.0, 0.0, 0.0)); plane.set_scale(glm::vec3(10.0));
 	Object player("", glm::vec3(0.0, 1.0, 0.0), playerCollisionShape, 1.0, dynamicsWorld);
 

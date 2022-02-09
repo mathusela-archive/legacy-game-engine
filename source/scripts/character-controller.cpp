@@ -11,7 +11,6 @@ float cameraDisplacement = 0.0;
 
 btGhostObject* playerGhost;
 
-
 void character_controller(Camera* camera, GLFWwindow* window, Object& player, float deltaTime, btCollisionShape* shape, float height, btDynamicsWorld* dynamicsWorld) {
 	if (firstRun) {
 			player.m_rigidbody->setAngularFactor(0); 
@@ -121,6 +120,16 @@ void character_controller(Camera* camera, GLFWwindow* window, Object& player, fl
 			}
 		}
 	};
+
+	{
+	// Test if has hit ceiling
+	btVector3 from(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
+	btVector3 to(trans.getOrigin().getX(), trans.getOrigin().getY() + height, trans.getOrigin().getZ());
+	btCollisionWorld::ClosestRayResultCallback rayCallback(from, to);
+	dynamicsWorld -> rayTest(from, to, rayCallback);
+	// This statement relies on the compiler optimising to exit early if first statement is false, will crash if not for this (mileage may vary with other compilers)
+	if (rayCallback.hasHit() && rayCallback.m_collisionObject->isStaticObject()) verticalVelocity = -1.5;
+	}
 
 	// Transform
 	trans.setOrigin(btVector3(pos.getX() + dir.getX(), pos.getY() + verticalDir, pos.getZ() + dir.getZ()));
