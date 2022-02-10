@@ -25,6 +25,7 @@
 #include "headers/physics-functions.hpp"
 #include "headers/object.hpp"
 #include "headers/scripts/character-controller.hpp"
+#include "headers/terrain.hpp"
 
 const unsigned int WIDTH = 1920;
 const unsigned int HEIGHT = 1080;
@@ -73,8 +74,8 @@ int main() {
 	collisionShapes.push_back(playerCollisionShape);
 
 	Object cube(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 10.0, 0.0}, boxCollisionShape, 1.0, dynamicsWorld);
-	Object cube1(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 5.0, 10.0}, boxCollisionShape, 0.0, dynamicsWorld);
-	Object plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, -4.0, 0.0), groundCollisionShape, 0.0, dynamicsWorld); plane.set_loc(glm::vec3(0.0, 0.0, 0.0)); plane.set_scale(glm::vec3(10.0));
+	Terrain room(ROOT_DIR + "resources/models/rooms/test-room/testRoom.obj", ROOT_DIR + "resources/models/rooms/test-room/testRoom.obj", glm::vec3 {0.0, 0.0, 0.0}, dynamicsWorld);
+	// Object plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, -4.0, 0.0), groundCollisionShape, 0.0, dynamicsWorld); plane.set_loc(glm::vec3(0.0, 0.0, 0.0)); plane.set_scale(glm::vec3(10.0));
 	Object player("", glm::vec3(0.0, 1.0, 0.0), playerCollisionShape, 1.0, dynamicsWorld);
 
 	// Gameloop
@@ -101,7 +102,6 @@ int main() {
 		dynamicsWorld -> stepSimulation(deltaTime);
 
 		cube.update_render_to_physics();
-		cube1.update_render_to_physics();
 		player.update_render_to_physics();
 		if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {cube.m_rigidbody -> activate(true); cube.m_rigidbody -> applyTorque(btVector3(0.0, 0.0, 20.0));}
 		character_controller(&camera, window, player, deltaTime, playerCollisionShape, 1.0, dynamicsWorld);
@@ -115,8 +115,8 @@ int main() {
 		// camera_controller(&camera, window);
 
 		cube.draw(shaderProgram, camera, sceneLights);
-		cube1.draw(shaderProgram, camera, sceneLights);
-		plane.draw(shaderProgram, camera, sceneLights);
+		room.draw(shaderProgram, camera, sceneLights);
+		// plane.draw(shaderProgram, camera, sceneLights);
 		hut.draw(shaderProgram, camera, sceneLights);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, hdrFramebuffer);

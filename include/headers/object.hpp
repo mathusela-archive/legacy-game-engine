@@ -4,11 +4,12 @@
 #include "headers/physics-functions.hpp"
 
 class Object : public Model {
-private:
+protected:
 	btDynamicsWorld* m_dynamicsWorld;
 
 public:
 	btRigidBody* m_rigidbody;
 	void update_render_to_physics();
 	Object(std::string path, glm::vec3 spawnLocation, btCollisionShape* collisionShape, float mass, btDynamicsWorld* dynamicsWorld);
+	Object(std::string path, glm::vec3 spawnLocation, float mass, btDynamicsWorld* dynamicsWorld);
 };

@@ -114,8 +114,6 @@ void character_controller(Camera* camera, GLFWwindow* window, Object& player, fl
 					projection.setY(prodDir.getY() < 0.0 ? 0 : projection.getY()); 
 					projection.setZ(prodDir.getZ() < 0.0 ? 0 : projection.getZ()); 
 					dir -= projection;
-
-					// FIXME: May not work with collisions from below (i.e. jumping into ceiling)
 				}
 			}
 		}

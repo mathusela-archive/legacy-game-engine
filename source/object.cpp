@@ -6,6 +6,10 @@ Object::Object(std::string path, glm::vec3 spawnLocation, btCollisionShape* coll
 	m_dynamicsWorld -> addRigidBody(m_rigidbody);
 }
 
+Object::Object(std::string path, glm::vec3 spawnLocation, float mass, btDynamicsWorld* dynamicsWorld) : Model(path, spawnLocation) {
+	m_dynamicsWorld = dynamicsWorld;
+}
+
 void Object::update_render_to_physics() {
 	btTransform trans;
 	m_rigidbody -> getMotionState() -> getWorldTransform(trans);

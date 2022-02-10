@@ -9,7 +9,7 @@ link_directories("./libs/")
 
 link_libraries(glfw3 assimp-vc140-mt opengl32 gdi32 BulletCollision_Debug Bullet3Common BulletDynamics_Debug LinearMath_Debug)
 
-add_executable(dungeon-crawler ./source/main.cpp ./source/standard-functions.cpp ./source/glad.c ./source/model.cpp ./source/camera.cpp ./source/screen-quad.cpp ./source/physics-functions.cpp ./source/object.cpp ./source/scripts/character-controller.cpp)
+add_executable(dungeon-crawler ./source/main.cpp ./source/standard-functions.cpp ./source/glad.c ./source/model.cpp ./source/camera.cpp ./source/screen-quad.cpp ./source/physics-functions.cpp ./source/object.cpp ./source/scripts/character-controller.cpp ./source/terrain.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
