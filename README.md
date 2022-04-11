@@ -1,2 +1,2 @@
 # game-engine
-Custom, lightweight Game Engine, written in C++ and OpenGL
+Custom lightweight Game Engine, written in C++ and OpenGL
