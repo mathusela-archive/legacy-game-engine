@@ -29,7 +29,7 @@
 
 const unsigned int WIDTH = 1920;
 const unsigned int HEIGHT = 1080;
-char TITLE[] = "Dungeon Crawler";
+char TITLE[] = "Game Engine";
 
 const std::string ROOT_DIR = "../../";
 
