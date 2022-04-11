@@ -1,2 +1,2 @@
-# dungeon-crawler
-Procedurally generated dungeon crawler, written in C++ and OpenGL
+# game-engine
+Custom, lightweight Game Engine, written in C++ and OpenGL
