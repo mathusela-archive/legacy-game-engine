@@ -1,3 +1,14 @@
+/**
+ * @file character-controller.cpp
+ * @author Matthew Richardson
+ * @brief File containing main kinematic character controller script
+ * @version 0.1
+ * @date 2022-04-12
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "headers/scripts/character-controller.hpp"
 #include <iostream>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
@@ -11,6 +22,17 @@ float cameraDisplacement = 0.0;
 
 btGhostObject* playerGhost;
 
+/**
+ * @brief Kinematic character controller script. Initialises player character and handles movement and collisions.
+ * 
+ * @param camera 
+ * @param window 
+ * @param player 
+ * @param deltaTime 
+ * @param shape 
+ * @param height 
+ * @param dynamicsWorld 
+ */
 void character_controller(Camera* camera, GLFWwindow* window, Object& player, float deltaTime, btCollisionShape* shape, float height, btDynamicsWorld* dynamicsWorld) {
 	if (firstRun) {
 			player.m_rigidbody->setAngularFactor(0); 
@@ -140,11 +162,6 @@ void character_controller(Camera* camera, GLFWwindow* window, Object& player, fl
     camera->m_pos = glm::lookAt(camera->m_loc,
         camera->m_loc + camera->m_front,
         cameraUp);
-	
-	// TODO: Add check to stop going through statics: https://pybullet.org/Bullet/phpBB3/viewtopic.php?t=3026
-	// TODO: Add force to push you out of objects if you're inside them (right now just stops you)
-	// FIXME: Fix stutters
-	// FIXME: Not working at all framerates
 }
 
 

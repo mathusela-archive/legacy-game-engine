@@ -1,7 +1,7 @@
 /**
  * @file camera-controller.cpp
  * @author Matthew Richardson
- * @brief File storing scripts related to camera control.
+ * @brief File storing scripts related to debug camera control.
  * @version 0.1
  * @date 2022-01-31
  * 
@@ -17,9 +17,7 @@
  * @param window 
  */
 void camera_controller_init(GLFWwindow* window) {
-
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
 }
 
 float deltaTime;

@@ -3,6 +3,10 @@
 #include "headers/model.hpp"
 #include "headers/physics-functions.hpp"
 
+/**
+ * @brief Object class, creates a renderable game object with rigidbody physics properties. 
+ * 
+ */
 class Object : public Model {
 protected:
 	btDynamicsWorld* m_dynamicsWorld;

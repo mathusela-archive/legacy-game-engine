@@ -1,7 +1,7 @@
 /**
  * @file camera.cpp
  * @author Matthew Richardson
- * @brief Define camera class used for rendering and generating view matrices
+ * @brief Define camera class used for rendering and generating view matrices.
  * @version 0.1
  * @date 2022-01-31
  * 
@@ -33,7 +33,7 @@ void Camera::move_loc(glm::vec3 moveLoc) {
 }
 
 /**
- * @brief Construct a new Camera object
+ * @brief Construct a new Camera object.
  * 
  * @param fov 
  * @param width 

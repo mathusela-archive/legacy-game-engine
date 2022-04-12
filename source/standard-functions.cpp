@@ -29,7 +29,7 @@
  * @param width 
  * @param height 
  * @param title 
- * @param MSAA Multisampling level of MSAA.
+ * @param MSAA Multisampling level.
  * @return Reference to window.
  */
 GLFWwindow* create_window(unsigned int width, unsigned int height, char* title, unsigned int MSAA) {

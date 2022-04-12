@@ -129,9 +129,6 @@ int main() {
 		glUniform1f(glGetUniformLocation(hdrShader, "exposure"), exposure);
 		screenQuad.draw(hdrShader, renderTexture);
 
-		// FIXME: Physics too slow under 60hz.
-		// FIXME: Scaling not working with physics (update_render_to_physics).
-		// TODO: Look into compound shapes for statics. And/or use triangle mesh colliders: https://docs.panda3d.org/1.10/python/programming/physics/bullet/collision-shapes
 		auto bluredTexture = run_gaussian_blur(blurShader, brightPixelsTexture, blurFramebuffers, blurTextures, 10);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

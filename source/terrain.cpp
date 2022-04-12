@@ -1,11 +1,36 @@
+/**
+ * @file terrain.cpp
+ * @author Matthew Richardson
+ * @brief Terrain class definition.
+ * @version 0.1
+ * @date 2022-04-12
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "headers/terrain.hpp"
 
 #include <iostream>
 
+/**
+ * @brief Helper function to convert from a glm::vec3 to a btVector3.
+ * 
+ * @param vecIn 
+ * @return btVector3 
+ */
 btVector3 glmVec_to_bulletVec(glm::vec3 vecIn) {
 	return btVector3(vecIn.x, vecIn.y, vecIn.z);
 }
 
+/**
+ * @brief Construct and initialize a new Terrain instance. Generates geometry from collisionPath.
+ * 
+ * @param renderPath 
+ * @param collisionPath 
+ * @param spawnLocation 
+ * @param dynamicsWorld 
+ */
 Terrain::Terrain(std::string renderPath, std::string collisionPath, glm::vec3 spawnLocation, btDynamicsWorld* dynamicsWorld) : Object(renderPath, spawnLocation, 0.0, dynamicsWorld) {
 	// Import file
 	Assimp::Importer importer;
@@ -30,6 +55,13 @@ Terrain::Terrain(std::string renderPath, std::string collisionPath, glm::vec3 sp
 	dynamicsWorld->addRigidBody(m_rigidbody);
 };
 
+/**
+ * @brief Process imported nodes and create collision shapes.
+ * 
+ * @param node 
+ * @param scene 
+ * @param collisionShapesReturn 
+ */
 void Terrain::process_node_physics(aiNode* node, const aiScene* scene, std::vector<btConvexTriangleMeshShape*>& collisionShapesReturn) {
 	// Process meshes
 	for (int i = 0; i < node->mNumMeshes; i++) {

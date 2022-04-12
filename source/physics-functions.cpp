@@ -1,5 +1,21 @@
+/**
+ * @file physics-functions.cpp
+ * @author Matthew Richardson
+ * @brief File containing standard physics helper functions.
+ * @version 0.1
+ * @date 2022-04-12
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "headers/physics-functions.hpp"
 
+/**
+ * @brief Initialize and create dynamics world.
+ * 
+ * @return btDiscreteDynamicsWorld* 
+ */
 btDiscreteDynamicsWorld* create_physics_world() {
 	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
 	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -14,6 +30,14 @@ btDiscreteDynamicsWorld* create_physics_world() {
 	//TODO: Delete all of these variables at the end of the program somehow.
 }
 
+/**
+ * @brief Initialize and create a rigidbody instance.
+ * 
+ * @param collisionShapeIn 
+ * @param initialLocation 
+ * @param mass 
+ * @return btRigidBody* 
+ */
 btRigidBody* create_rigidbody(btCollisionShape* collisionShapeIn, btVector3 initialLocation, btScalar mass) {
 	btTransform transform;
 	transform.setIdentity();
