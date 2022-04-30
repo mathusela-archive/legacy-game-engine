@@ -103,7 +103,6 @@ int main() {
 
 		cube.update_render_to_physics();
 		player.update_render_to_physics();
-		if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {cube.m_rigidbody -> activate(true); cube.m_rigidbody -> applyTorque(btVector3(0.0, 0.0, 20.0));}
 		character_controller(&camera, window, player, deltaTime, playerCollisionShape, 1.0, dynamicsWorld);
 
 		// Render
