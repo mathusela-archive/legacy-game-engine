@@ -106,18 +106,17 @@ int main() {
 		character_controller(&camera, window, player, deltaTime, playerCollisionShape, 1.0, dynamicsWorld);
 
 		// Render
+		// Render geometry
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// camera_controller(&camera, window);
-
 		cube.draw(shaderProgram, camera, sceneLights);
 		room.draw(shaderProgram, camera, sceneLights);
-		// plane.draw(shaderProgram, camera, sceneLights);
 		hut.draw(shaderProgram, camera, sceneLights);
 
+		// HDR tonemapping
 		glBindFramebuffer(GL_FRAMEBUFFER, hdrFramebuffer);
 
 		glDisable(GL_DEPTH_TEST);
@@ -128,7 +127,9 @@ int main() {
 		glUniform1f(glGetUniformLocation(hdrShader, "exposure"), exposure);
 		screenQuad.draw(hdrShader, renderTexture);
 
+		// Blur
 		auto bluredTexture = run_gaussian_blur(blurShader, brightPixelsTexture, blurFramebuffers, blurTextures, 10);
+		// Bloom (to default framebuffer)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glUseProgram(bloomShader);
@@ -137,6 +138,7 @@ int main() {
 		glActiveTexture(GL_TEXTURE1); glBindTexture(GL_TEXTURE_2D, bluredTexture);
 		screenQuad.draw(bloomShader, hdrRenderTexture);
 
+		// Swap buffers and poll IO events
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
