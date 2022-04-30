@@ -36,6 +36,11 @@ const std::string ROOT_DIR = "../../";
 int main() {
 	// Rendering
 	auto window = create_window(WIDTH, HEIGHT, TITLE, 4);
+
+	// Framebuffers
+	unsigned int colorBuffer, positionBuffer, normalSpecularBuffer;
+	auto gBuffer = create_framebuffer(std::vector<unsigned int*> {&colorBuffer, &positionBuffer, &normalSpecularBuffer}, WIDTH, HEIGHT);
+
 	unsigned int renderTexture;
 	auto renderFramebuffer = create_framebuffer(std::vector<unsigned int*> {&renderTexture}, WIDTH, HEIGHT);
 	unsigned int hdrRenderTexture; unsigned int brightPixelsTexture;
@@ -46,9 +51,9 @@ int main() {
 		create_framebuffer(std::vector<unsigned int*> {&blurTextures[1]}, WIDTH, HEIGHT)
 	};
 
-	auto shaderProgram = create_shader(ROOT_DIR + "resources/shaders/forward/solid/vertex-shader.vert", ROOT_DIR + "resources/shaders/forward/solid/fragment-shader.frag");
+	
+	// Lights and cameras
 	Camera camera(90.0f, WIDTH, HEIGHT, 0.02f, 100.0f, glm::vec3 {0.0, 1.0, 0.0}, glm::vec3 {0.0, 0.0, 1.0}); 
-	Model hut(ROOT_DIR + "resources/models/hut/HutHigh.obj", glm::vec3(0.0, 0.0, 0.0)); hut.set_scale(glm::vec3(0.4));
 	std::vector<Light> sceneLights = {
 		Light {glm::vec3{5.0, 5.0, 8.0}, glm::vec3{1.0, 1.0, 1.0}, 1.0, POINT},
 		Light {glm::vec3{-5.0, 5.0, 8.0}, glm::vec3{0.0, 1.0, 1.0}, 1.0, POINT},
@@ -56,6 +61,11 @@ int main() {
 		Light {glm::vec3 {-100.0, 100.0, 80.0}, glm::vec3{0.71, 0.50, 0.50}, 8.0, DIRECTIONAL}
 	};
 
+	// Shaders
+	auto deferredGeometryShader = create_shader(ROOT_DIR + "resources/shaders/deferred/geometry/vertex-shader.vert", ROOT_DIR + "resources/shaders/deferred/geometry/fragment-shader.frag");
+	auto deferredShaderProgram = create_shader(ROOT_DIR + "resources/shaders/deferred/solid/vertex-shader.vert", ROOT_DIR + "resources/shaders/deferred/solid/fragment-shader.frag");
+
+	// auto shaderProgram = create_shader(ROOT_DIR + "resources/shaders/forward/solid/vertex-shader.vert", ROOT_DIR + "resources/shaders/forward/solid/fragment-shader.frag");
 	auto hdrShader = create_shader(ROOT_DIR + "resources/shaders/forward/hdr/vertex-shader.vert", ROOT_DIR + "resources/shaders/forward/hdr/fragment-shader.frag");
 	auto blurShader = create_shader(ROOT_DIR + "resources/shaders/forward/blur/vertex-shader.vert", ROOT_DIR + "resources/shaders/forward/blur/fragment-shader.frag");
 	auto standardPostprocessingShader = create_shader(ROOT_DIR + "resources/shaders/forward/standard-postprocessing/vertex-shader.vert", ROOT_DIR + "resources/shaders/forward/standard-postprocessing/fragment-shader.frag");
@@ -73,13 +83,15 @@ int main() {
 	collisionShapes.push_back(boxCollisionShape);
 	collisionShapes.push_back(playerCollisionShape);
 
+	// Objects
+	Model hut(ROOT_DIR + "resources/models/hut/HutHigh.obj", glm::vec3(0.0, 0.0, 0.0)); hut.set_scale(glm::vec3(0.4));
 	Object cube(ROOT_DIR + "resources/models/spec-cube/specCube.obj", glm::vec3 {0.0, 10.0, 0.0}, boxCollisionShape, 1.0, dynamicsWorld);
 	Terrain room(ROOT_DIR + "resources/models/rooms/test-room/testRoom.obj", ROOT_DIR + "resources/models/rooms/test-room/testRoom.obj", glm::vec3 {0.0, 0.0, 0.0}, dynamicsWorld);
-	// Object plane(ROOT_DIR + "resources/models/plane/Ground.obj", glm::vec3(0.0, -4.0, 0.0), groundCollisionShape, 0.0, dynamicsWorld); plane.set_loc(glm::vec3(0.0, 0.0, 0.0)); plane.set_scale(glm::vec3(10.0));
 	Object player("", glm::vec3(0.0, 1.0, 0.0), playerCollisionShape, 1.0, dynamicsWorld);
 
 	// Gameloop
-	glClearColor(1.0, 1.0, 1.0, 1.0);
+	// FIXME: With deferred rendering bloom interacts with clear color in the sky
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
@@ -109,18 +121,50 @@ int main() {
 		// Render geometry
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
-		glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
+		// glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		cube.draw(shaderProgram, camera, sceneLights);
-		room.draw(shaderProgram, camera, sceneLights);
-		hut.draw(shaderProgram, camera, sceneLights);
+		cube.draw_deferred(deferredGeometryShader, camera);
+		room.draw_deferred(deferredGeometryShader, camera);
+		hut.draw_deferred(deferredGeometryShader, camera);
 
-		// HDR tonemapping
-		glBindFramebuffer(GL_FRAMEBUFFER, hdrFramebuffer);
+		// Render lighting
+		glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
+
+		glUseProgram(deferredShaderProgram);
+		// Textures
+		glUniform1i(glGetUniformLocation(deferredShaderProgram, "colorMap"), 1);
+		glUniform1i(glGetUniformLocation(deferredShaderProgram, "positionMap"), 2);
+		glUniform1i(glGetUniformLocation(deferredShaderProgram, "normal_specularMap"), 3);
+		glActiveTexture(GL_TEXTURE1); glBindTexture(GL_TEXTURE_2D, colorBuffer);
+		glActiveTexture(GL_TEXTURE2); glBindTexture(GL_TEXTURE_2D, positionBuffer);
+		glActiveTexture(GL_TEXTURE3); glBindTexture(GL_TEXTURE_2D, normalSpecularBuffer);
+		// Camera
+		glUniform3fv(glGetUniformLocation(deferredShaderProgram, "cameraPos"), 1, glm::value_ptr(camera.m_loc));
+		// Lighting
+		for (int i=0; i<sceneLights.size(); i++) {
+			std::string posName = "sceneLights[" + std::to_string(i) + "].position";
+			std::string colorName = "sceneLights[" + std::to_string(i) + "].color";
+			std::string powerName = "sceneLights[" + std::to_string(i) + "].power";
+			std::string typeName = "sceneLights[" + std::to_string(i) + "].type";
+
+			glUniform3fv(glGetUniformLocation(deferredShaderProgram, posName.c_str()), 1, glm::value_ptr(sceneLights[i].location));
+			glUniform3fv(glGetUniformLocation(deferredShaderProgram, colorName.c_str()), 1, glm::value_ptr(sceneLights[i].color));
+			glUniform1f(glGetUniformLocation(deferredShaderProgram, powerName.c_str()), sceneLights[i].power);
+			glUniform1i(glGetUniformLocation(deferredShaderProgram, typeName.c_str()), sceneLights[i].type);
+		}
+		glUniform1i(glGetUniformLocation(deferredShaderProgram, "lightsCount"), sceneLights.size());
+
+		screenQuad.draw(deferredShaderProgram, renderTexture);
+
+
+
+		// HDR tonemapping
+		glBindFramebuffer(GL_FRAMEBUFFER, hdrFramebuffer);
 		
 		calculate_exposure(renderTexture, exposure, deltaTime, 0.5, 0.3, 5.0, 3.0);
 		glUseProgram(hdrShader);
