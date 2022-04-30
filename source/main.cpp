@@ -46,7 +46,7 @@ int main() {
 		create_framebuffer(std::vector<unsigned int*> {&blurTextures[1]}, WIDTH, HEIGHT)
 	};
 
-	auto shaderProgram = create_shader(ROOT_DIR + "resources/shaders/solid/vertex-shader.vert", ROOT_DIR + "resources/shaders/solid/fragment-shader.frag");
+	auto shaderProgram = create_shader(ROOT_DIR + "resources/shaders/forward/solid/vertex-shader.vert", ROOT_DIR + "resources/shaders/forward/solid/fragment-shader.frag");
 	Camera camera(90.0f, WIDTH, HEIGHT, 0.02f, 100.0f, glm::vec3 {0.0, 1.0, 0.0}, glm::vec3 {0.0, 0.0, 1.0}); 
 	Model hut(ROOT_DIR + "resources/models/hut/HutHigh.obj", glm::vec3(0.0, 0.0, 0.0)); hut.set_scale(glm::vec3(0.4));
 	std::vector<Light> sceneLights = {
@@ -56,10 +56,10 @@ int main() {
 		Light {glm::vec3 {-100.0, 100.0, 80.0}, glm::vec3{0.71, 0.50, 0.50}, 8.0, DIRECTIONAL}
 	};
 
-	auto hdrShader = create_shader(ROOT_DIR + "resources/shaders/hdr/vertex-shader.vert", ROOT_DIR + "resources/shaders/hdr/fragment-shader.frag");
-	auto blurShader = create_shader(ROOT_DIR + "resources/shaders/blur/vertex-shader.vert", ROOT_DIR + "resources/shaders/blur/fragment-shader.frag");
-	auto standardPostprocessingShader = create_shader(ROOT_DIR + "resources/shaders/standard-postprocessing/vertex-shader.vert", ROOT_DIR + "resources/shaders/standard-postprocessing/fragment-shader.frag");
-	auto bloomShader = create_shader(ROOT_DIR + "resources/shaders/bloom/vertex-shader.vert", ROOT_DIR + "resources/shaders/bloom/fragment-shader.frag");
+	auto hdrShader = create_shader(ROOT_DIR + "resources/shaders/forward/hdr/vertex-shader.vert", ROOT_DIR + "resources/shaders/forward/hdr/fragment-shader.frag");
+	auto blurShader = create_shader(ROOT_DIR + "resources/shaders/forward/blur/vertex-shader.vert", ROOT_DIR + "resources/shaders/forward/blur/fragment-shader.frag");
+	auto standardPostprocessingShader = create_shader(ROOT_DIR + "resources/shaders/forward/standard-postprocessing/vertex-shader.vert", ROOT_DIR + "resources/shaders/forward/standard-postprocessing/fragment-shader.frag");
+	auto bloomShader = create_shader(ROOT_DIR + "resources/shaders/forward/bloom/vertex-shader.vert", ROOT_DIR + "resources/shaders/forward/bloom/fragment-shader.frag");
 	ScreenQuad screenQuad;
 
 	// Physics
