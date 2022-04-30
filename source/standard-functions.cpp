@@ -23,6 +23,8 @@
 #include <stb/stb_image.h>
 
 
+#define DEV
+
 /**
  * @brief Create and configure a GLFW window.
  * 
@@ -120,7 +122,7 @@ unsigned int create_framebuffer(std::vector<unsigned int*> texturesOut, unsigned
 
     std::vector<unsigned int> buffers;
     for (int i=0; i<texturesOut.size(); i++) buffers.push_back(GL_COLOR_ATTACHMENT0 + i);
-    glDrawBuffers(2, &buffers[0]);
+    glDrawBuffers(texturesOut.size(), &buffers[0]);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     return FBO;
