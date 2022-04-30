@@ -33,6 +33,33 @@ char TITLE[] = "Game Engine";
 
 const std::string ROOT_DIR = "../../";
 
+// Functions
+void deferred_rendering_uniforms(unsigned int shaderProgram, Camera camera, std::vector<Light> sceneLights,  unsigned int colorBuffer, unsigned int positionBuffer, unsigned int normalSpecularBuffer) {
+	glUseProgram(shaderProgram);
+	// Textures
+	glUniform1i(glGetUniformLocation(shaderProgram, "colorMap"), 1);
+	glUniform1i(glGetUniformLocation(shaderProgram, "positionMap"), 2);
+	glUniform1i(glGetUniformLocation(shaderProgram, "normal_specularMap"), 3);
+	glActiveTexture(GL_TEXTURE1); glBindTexture(GL_TEXTURE_2D, colorBuffer);
+	glActiveTexture(GL_TEXTURE2); glBindTexture(GL_TEXTURE_2D, positionBuffer);
+	glActiveTexture(GL_TEXTURE3); glBindTexture(GL_TEXTURE_2D, normalSpecularBuffer);
+	// Camera
+	glUniform3fv(glGetUniformLocation(shaderProgram, "cameraPos"), 1, glm::value_ptr(camera.m_loc));
+	// Lighting
+	for (int i=0; i<sceneLights.size(); i++) {
+		std::string posName = "sceneLights[" + std::to_string(i) + "].position";
+		std::string colorName = "sceneLights[" + std::to_string(i) + "].color";
+		std::string powerName = "sceneLights[" + std::to_string(i) + "].power";
+		std::string typeName = "sceneLights[" + std::to_string(i) + "].type";
+
+		glUniform3fv(glGetUniformLocation(shaderProgram, posName.c_str()), 1, glm::value_ptr(sceneLights[i].location));
+		glUniform3fv(glGetUniformLocation(shaderProgram, colorName.c_str()), 1, glm::value_ptr(sceneLights[i].color));
+		glUniform1f(glGetUniformLocation(shaderProgram, powerName.c_str()), sceneLights[i].power);
+		glUniform1i(glGetUniformLocation(shaderProgram, typeName.c_str()), sceneLights[i].type);
+	}
+	glUniform1i(glGetUniformLocation(shaderProgram, "lightsCount"), sceneLights.size());
+}
+
 int main() {
 	// Rendering
 	auto window = create_window(WIDTH, HEIGHT, TITLE, 4);
@@ -121,7 +148,6 @@ int main() {
 		// Render geometry
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
-		// glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -135,33 +161,8 @@ int main() {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 
-		glUseProgram(deferredShaderProgram);
-		// Textures
-		glUniform1i(glGetUniformLocation(deferredShaderProgram, "colorMap"), 1);
-		glUniform1i(glGetUniformLocation(deferredShaderProgram, "positionMap"), 2);
-		glUniform1i(glGetUniformLocation(deferredShaderProgram, "normal_specularMap"), 3);
-		glActiveTexture(GL_TEXTURE1); glBindTexture(GL_TEXTURE_2D, colorBuffer);
-		glActiveTexture(GL_TEXTURE2); glBindTexture(GL_TEXTURE_2D, positionBuffer);
-		glActiveTexture(GL_TEXTURE3); glBindTexture(GL_TEXTURE_2D, normalSpecularBuffer);
-		// Camera
-		glUniform3fv(glGetUniformLocation(deferredShaderProgram, "cameraPos"), 1, glm::value_ptr(camera.m_loc));
-		// Lighting
-		for (int i=0; i<sceneLights.size(); i++) {
-			std::string posName = "sceneLights[" + std::to_string(i) + "].position";
-			std::string colorName = "sceneLights[" + std::to_string(i) + "].color";
-			std::string powerName = "sceneLights[" + std::to_string(i) + "].power";
-			std::string typeName = "sceneLights[" + std::to_string(i) + "].type";
-
-			glUniform3fv(glGetUniformLocation(deferredShaderProgram, posName.c_str()), 1, glm::value_ptr(sceneLights[i].location));
-			glUniform3fv(glGetUniformLocation(deferredShaderProgram, colorName.c_str()), 1, glm::value_ptr(sceneLights[i].color));
-			glUniform1f(glGetUniformLocation(deferredShaderProgram, powerName.c_str()), sceneLights[i].power);
-			glUniform1i(glGetUniformLocation(deferredShaderProgram, typeName.c_str()), sceneLights[i].type);
-		}
-		glUniform1i(glGetUniformLocation(deferredShaderProgram, "lightsCount"), sceneLights.size());
-
+		deferred_rendering_uniforms(deferredShaderProgram, camera, sceneLights, colorBuffer, positionBuffer, normalSpecularBuffer);
 		screenQuad.draw(deferredShaderProgram, renderTexture);
-
-
 
 		// HDR tonemapping
 		glBindFramebuffer(GL_FRAMEBUFFER, hdrFramebuffer);
