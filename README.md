@@ -7,3 +7,5 @@ Adapted from my [A-Level programming project](https://github.com/mathusela-archi
 ---
 
 Custom lightweight Game Engine, written in C++ and OpenGL
+
+![image](docs/image.png)
